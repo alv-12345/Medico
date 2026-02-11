@@ -23,7 +23,7 @@ const Navbar = () => {
           { path: '/', label: 'Home' },
           { path: '/doctors', label: 'Find Doctors' },
           { path: '/about', label: 'About' },
-          { path: '/contact', label: 'My Appointments' },
+          { path: '/contact', label: 'Contact' },
         ].map((item, idx) => (
           <NavLink
             key={idx}
