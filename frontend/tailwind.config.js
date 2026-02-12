@@ -6,9 +6,11 @@ export default {
   ],
   theme: {
     extend: {
-      colors: {
-        'primary': '#5f6FFF',
-        'primary-dark': '#4f5FEF',
+      gridTemplateColumns:{
+        'auto':'repeat(auto-fill, minmax(200px, 1fr))'
+      },
+      colors:{
+        'primary':'#5F6FFF'
       }
     },
   },
