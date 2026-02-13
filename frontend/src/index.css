@@ -4,20 +4,38 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global font */
 * {
-    font-family: Outfit;
+    font-family: Outfit, sans-serif;
 }
 
+/* Active state styles */
 .active hr {
-    @apply block
+    @apply block;
 }
 
 @media (max-width:740px) {
-    .active  p{
-       @apply text-white bg-primary
+    .active p {
+        @apply text-white bg-primary;
     }
 }
 
+/* Hide scrollbar */
 ::-webkit-scrollbar {
-    @apply hidden
+    @apply hidden;
+}
+
+/* Background color for the whole page */
+body {
+    background-color: #ffffff; /* light cool gray-blue */
+    margin: 0;
+    padding: 0;
+}
+
+/* Profile card styling */
+.profile-container {
+    background-color: #ffffff; /* clean white card */
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
