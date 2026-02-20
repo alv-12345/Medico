@@ -1,14 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { AppContext } from '../context/AppContext'
 import { assets } from '../assets/assets'
 import RelatedDoctors from '../components/RelatedDoctors'
+import api from '../services/api'
+import { toast } from 'react-toastify'
+import { AuthContext } from '../context/AuthContextCore'
 
 const Appointment = () => {
 
     const { docId } = useParams()
-    const { doctors, currencySymbol } = useContext(AppContext)
+    const { doctors, currencySymbol, backendUrl, getDoctorsData } = useContext(AppContext)
+    const { user } = useContext(AuthContext)
     const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
+
+    const navigate = useNavigate()
 
     const [docInfo, setDocInfo] = useState(null)
     const [docSlots, setDocSlots] = useState([])
@@ -25,6 +31,8 @@ const Appointment = () => {
 
         // getting current date
         let today = new Date()
+
+        let allSlots = []
 
         for (let i = 0; i < 7; i++) {
             // getting date with index 
@@ -50,29 +58,69 @@ const Appointment = () => {
             while (currentDate < endTime) {
                 let formattedTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 
-                // Add slot to array
-                timeSlots.push({
-                    datetime: new Date(currentDate),
-                    time: formattedTime
-                })
+                let day = currentDate.getDate()
+                let month = currentDate.getMonth() + 1
+                let year = currentDate.getFullYear()
+
+                const slotDate = `${day}_${month}_${year}`
+                const slotTime = formattedTime
+
+                // Format date as YYYY-MM-DD for comparison with unavailableDates
+                const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+                const isUnavailable = docInfo.unavailableDates && docInfo.unavailableDates.includes(formattedDate)
+
+                const isSlotAvailable = docInfo.slots_booked && docInfo.slots_booked[slotDate] && docInfo.slots_booked[slotDate].includes(slotTime) ? false : true
+
+                if (isSlotAvailable && !isUnavailable) {
+                    // Add slot to array
+                    timeSlots.push({
+                        datetime: new Date(currentDate),
+                        time: formattedTime
+                    })
+                }
 
                 // Increment current time by 30 minutes
                 currentDate.setMinutes(currentDate.getMinutes() + 30)
             }
 
-            setDocSlots(prev => ([...prev, timeSlots]))
+            allSlots.push(timeSlots)
         }
+
+        setDocSlots(allSlots)
     }
 
     const bookAppointment = async () => {
-        const date = docSlots[slotIndex][0].datetime
+        if (!user) {
+            toast.warn('Login to book appointment')
+            return navigate('/login')
+        }
 
-        let day = date.getDate()
-        let month = date.getMonth() + 1
-        let year = date.getFullYear()
+        if (!slotTime) {
+            return toast.warn('Please select a time slot')
+        }
 
-        const slotDate = `${day}_${month}_${year}`
-        console.log(slotDate, slotTime)
+        try {
+            const date = docSlots[slotIndex][0].datetime
+
+            let day = date.getDate()
+            let month = date.getMonth() + 1
+            let year = date.getFullYear()
+
+            const slotDate = `${day}_${month}_${year}`
+
+            const { data } = await api.post('/user/book-appointment', { docId, slotDate, slotTime })
+            if (data.success) {
+                toast.success(data.message)
+                getDoctorsData()
+                navigate('/my-appointments')
+            } else {
+                toast.error(data.message, { autoClose: 800 })
+            }
+
+        } catch (error) {
+            console.log(error)
+            toast.error(error.message, { autoClose: 800 })
+        }
     }
 
     useEffect(() => {
@@ -92,7 +140,7 @@ const Appointment = () => {
             {/* ---------- Doctor Details ----------- */}
             <div className='flex flex-col sm:flex-row gap-4'>
                 <div>
-                    <img className='bg-primary w-full sm:max-w-72 rounded-lg' src={docInfo.image} alt="" />
+                    <img className='bg-primary w-full sm:max-w-72 rounded-lg' src={docInfo.image && docInfo.image !== 'null' ? docInfo.image : assets.profile_pic} alt="" />
                 </div>
 
                 <div className='flex-1 border border-gray-400 rounded-lg p-8 py-7 bg-white mx-2 sm:mx-0 mt-[-80px] sm:mt-0'>

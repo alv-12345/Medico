@@ -3,14 +3,21 @@ import Header from '../components/Header'
 import TopDoctors from '../components/TopDoctors'
 import Banner from '../components/Banner'
 import SpecialityMenu from '../components/SpecialityMenu'
+import Reveal from '../components/Reveal'
 
 const Home = () => {
   return (
-    <div>
+    <div className='overflow-hidden'>
       <Header />
-      <SpecialityMenu />
-      <TopDoctors />
-      <Banner />
+      <Reveal width="100%" delay={0.2}>
+        <SpecialityMenu />
+      </Reveal>
+      <Reveal width="100%" delay={0.3}>
+        <TopDoctors />
+      </Reveal>
+      <Reveal width="100%" delay={0.2}>
+        <Banner />
+      </Reveal>
     </div>
   )
 }
