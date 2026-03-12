@@ -11,7 +11,7 @@ const Sidebar = () => {
     if (role !== 'admin' && role !== 'doctor') return null;
 
     return (
-        <div className='min-h-screen bg-white/50 backdrop-blur-md border-r border-emerald-100/30'>
+        <div className='min-h-screen bg-white border-r border-emerald-100/50 shadow-[4px_0_24px_rgba(0,0,0,0.02)]'>
             <ul className='text-[#515151] mt-5'>
 
                 <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-64 cursor-pointer transition-all ${isActive ? 'bg-emerald-50 border-r-4 border-primary text-primary font-bold' : 'hover:bg-emerald-50/50'}`} to={'/dashboard'}>
