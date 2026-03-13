@@ -96,7 +96,9 @@ const Navbar = () => {
                     <span className='text-white font-black text-2xl'>MEDICO</span>
                  </div>
                  <button onClick={() => setShowMenu(false)} className='w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md'>
-                    <img src={assets.cross_icon} className='w-6 brightness-0 invert' alt="Close" />
+                    <svg className='w-6 h-6 text-white' fill='none' stroke='currentColor' viewBox='0 0 24 24' strokeWidth='2.5'>
+                      <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
+                    </svg>
                  </button>
               </div>
 
